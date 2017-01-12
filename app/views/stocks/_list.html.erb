@@ -4,10 +4,8 @@
 <th>Name</th>
 <th>Symbol</th>
 <th>Current Price</th>
-
-<% if @user.id == current_user.id %>
 <th>Actions</th>
-<% end %>
+
 </tr>
 </thead>
 
@@ -17,9 +15,23 @@
   <td><%= user_stock.name %></td>
   <td><%= user_stock.ticker %></td>
   <td><%= user_stock.price %></td>
+    <td>
   <% if @user.id == current_user.id %>
-    <td><%= link_to "Delete", user_stock_path(user_stock), method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-xs btn-danger' %></td>
+  <%= link_to "Delete", user_stock_path(user_stock), method: :delete, data: {confirm: "Are you sure?"}, class: 'btn btn-xs btn-danger' %>
+  <% elsif current_user.can_add_stock?(user_stock.ticker) %>
+  <%= link_to "Add to my portfolio", user_stocks_path(user: current_user, stock_ticker: user_stock.ticker, stock_id: user_stock.id ? user_stock.id : ''), method: :post, class: 'btn btn-xs btn-success' %>
+  <% else %>
+    <span class='label label-default'>
+          You have already added
+          <% if current_user.stock_already_added?(user_stock.ticker) %>
+            this stock
+          <% elsif !current_user.under_stock_limit? %>
+            10 stocks
+          <% end %>
+        </span>
   <% end %>
+
+  </td>
   </tr>
  <% end %>
 </tbody>

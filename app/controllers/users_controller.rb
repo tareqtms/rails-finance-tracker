@@ -31,4 +31,9 @@ class UsersController < ApplicationController
       redirect_to my_friends_path, error: "The person not found with this id!"
     end
   end
+
+  def show
+    @user = User.find(params[:id])
+    @user_stocks = @user.stocks
+  end
 end
